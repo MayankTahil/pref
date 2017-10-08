@@ -1,6 +1,6 @@
 # General
-export ZSH_CONF="/Users/mayank/.pref/zsh"
-export PATH="/Users/mayank/.pref/bin:$PATH"
+export ZSH_CONF="~/.pref/zsh"
+export PATH="~/.pref/bin:$PATH"
 source $ZSH_CONF/.antigen.zsh
 source $ZSH_CONF/.aliases.zsh
 
