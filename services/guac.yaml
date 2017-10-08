@@ -1,0 +1,19 @@
+---
+version: "2"
+services:
+  # Guacamole service for Robust Backdoor access
+  guac:
+    image: db260179/guacamole-combined
+    ports:
+      - "8080:8080"
+    volumes:
+      - guac:/app/data
+    networks:
+      mgmt:
+    hostname: guacamole
+volumes: 
+  guac:
+
+networks: 
+  mgmt:
+    driver: bridge

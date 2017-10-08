@@ -1,0 +1,21 @@
+---
+version: "2"
+services:
+  # XenOrchestra for XenServer management 
+  xo:
+    image: brijohn/xen-orchestra
+    ports:
+      - "8000:8000"
+    volumes:
+      - xo-redis:/var/lib/redis
+      - xo-server:/var/lib/xo-server
+    networks:
+      mgmt:
+
+volumes: 
+  xo-server:
+  xo-redis:
+
+networks: 
+  mgmt:
+    driver: bridge
