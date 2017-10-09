@@ -1,11 +1,13 @@
 # General
 export ZSH_CONF="~/.pref/zsh"
 export PATH="~/.pref/bin:$PATH"
-source $ZSH_CONF/.antigen.zsh
-source $ZSH_CONF/.aliases.zsh
+source ~/.pref/zsh/.antigen.zsh
+source ~/.pref/zsh/.aliases.zsh
+export fpath=(~/.zsh/completion $fpath)
+autoload -Uz compinit && compinit -i
 
 # Plugins
-plugins=(git, brew, npm, zsh-completions, kubectl, brew, osx, extract, z)
+plugins=(git brew npm zsh-completions kubectl brew osx extract z)
 
 # Load the oh-my-zsh's library.
 antigen use oh-my-zsh
@@ -14,6 +16,7 @@ antigen use oh-my-zsh
 antigen bundle git
 antigen bundle pip
 antigen bundle command-not-found
+antigen bundle webyneter/docker-aliases.git
 
 # Antigen Git Bundles
 antigen bundle zsh-users/zsh-syntax-highlighting

@@ -5,7 +5,7 @@ services:
   guac:
     image: db260179/guacamole-combined
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080/tcp"
     volumes:
       - guac:/app/data
     networks:
