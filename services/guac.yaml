@@ -10,7 +10,10 @@ services:
       - guac:/app/data
     networks:
       mgmt:
-    hostname: guacamole
+    hostname: guac
+    mem_limit: 500m
+    memswap_limit: 500m
+    mem_reservation: 300m
 volumes: 
   guac:
 

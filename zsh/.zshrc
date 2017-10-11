@@ -1,5 +1,4 @@
 # General
-export ZSH_CONF="~/.pref/zsh"
 export PATH="~/.pref/bin:$PATH"
 source ~/.pref/zsh/.antigen.zsh
 source ~/.pref/zsh/.aliases.zsh

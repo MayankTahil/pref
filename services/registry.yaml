@@ -1,0 +1,13 @@
+---
+version: "2"
+services:
+  # Docker registry service for DIND Backdoor environment
+  registry:
+    image: registry
+    networks:
+      mgmt:
+    hostname: registry
+
+networks: 
+  mgmt:
+    driver: bridge

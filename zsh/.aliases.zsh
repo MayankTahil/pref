@@ -1,12 +1,26 @@
-alias config=subl $ZSH_CONFIG
+export ZSH_CONF="~/.pref/zsh"
+alias config="subl $ZSH_CONF"
 alias services="cd ~/.pref/services"
 
+push(){
+	name=$(basename "$1" ".")
+	curl -s --upload-file $1 https://transfer.sh/$name | pbcopy
+	printf "\n"
+}
+get(){
+	curl -k $1 -o $2
+}
+
 ##
-# Services
+# CLI Shortcuts
 ##
 cdl(){
 	cd $1 && ls -lhGoALS ./
 }
+
+##
+# Services
+##
 
 # XenOrchestra
 xo(){
@@ -24,6 +38,9 @@ xo(){
   elif [ "$1" = "end" ]; then
   	services && \
   	docker-compose -f xo.yaml down
+  elif [ "$1" = "exec" ]; then
+  	services && \
+  	docker-compose -f xo.yaml exec xo bash
 	else
 		echo "Invalid flag"
 	fi
@@ -45,6 +62,44 @@ guac(){
   elif [ "$1" = "end" ]; then
   	services && \
   	docker-compose -f guac.yaml down
+  elif [ "$1" = "stat" ]; then
+  	services && \
+  	docker-compose -f guac.yaml logs -t
+  elif [ "$1" = "exec" ]; then
+  	services && \
+  	docker-compose -f guac.yaml exec guac bash
+	else
+		echo "Invalid flag"
+	fi
+}
+
+# Docker-in-Docker sandbox environment
+sandbox(){
+	if [ -z "$1" ]; then
+  	services && \
+  	docker-compose -f sandbox.yaml run --rm sandbox
+	elif [ "$1" = "remove" ]; then
+  	services && \
+  	docker-compose -f sandbox.yaml down &> /dev/null
+	elif [ "$1" = "update" ]; then
+  	services && \
+  	docker-compose -f sandbox.yaml build &> /dev/null && \
+  	docker-compose -f sandbox.yaml run --rm sandbox
+	fi
+}
+
+# Docker Registry
+# Guacamole 
+registry(){
+	if [ -z "$1" ]; then
+		echo "Please give a command like 'start' or 'stop'"
+	elif [ "$1" = "start" ]; then
+  	services && \
+  	docker-compose -f registry.yaml up -d	
+	elif [ "$1" = "stop" ]; then
+  	services && \
+  	docker-compose -f registry.yaml stop registry && \
+  	docker-compose -f registry.yaml rm -f registry
 	else
 		echo "Invalid flag"
 	fi
@@ -65,31 +120,29 @@ alias aws-cli="docker run -it \
 		mayankt/aws-cli"
 alias aws_end="docker rm -f aws-cli"
 aws(){
-	if [[ -n $( docker ps | grep aws-cli ) ]]; then
-	  docker rm -f aws-cli && \
+	if [ -n $( docker ps | grep aws-cli ) ]; then
+	  aws_end && \
 	  aws-cli
 	else
 		aws-cli
 	fi
 }
 
-alias sandbox-cli="docker run \
+# Ad-Hoc external Sandbox Docker-in-Docker environment
+sandbox-cli(){
+  if [ -z "$1" ]; then
+  	docker run \
 		--name=sandbox \
 		--privileged \
 		-it \
 		--rm \
 		-v $(pwd):/data \
 		-p 127.0.0.1:9000-9010:9000-9010/tcp \
-		mayankt/backdoor:sandbox"
-alias sandbox_end="docker rm -f sandbox"
-sandbox(){
-	if [[ -n $( docker ps | grep sandbox ) ]]; then
-	  docker rm -f sandbox && \
-	  sandbox-cli
-	else
-			sandbox-cli
-	fi
+		mayankt/backdoor:sandbox
+  elif [ "$1" = "end" ]; then
+  	docker rm -f sandbox
+  fi
 }
 
-# Resume-cli
+# # Resume-cli
 alias resume="docker run -it --rm -v $(pwd):/data mayankt/resume resume"

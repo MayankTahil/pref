@@ -1,0 +1,19 @@
+---
+version: "2"
+services:
+  # Docker-in-Docker environment for Sandbox
+  sandbox:
+    build:
+      context: ./
+      dockerfile: sandbox.dockerfile
+    image: backdoor:sandbox
+    privileged: true
+    ports:
+      - "127.0.0.1:9000-9010:9000-9010/tcp"
+    volumes:
+      - ~/Documents/Github/:/data
+    networks:
+      mgmt:
+networks: 
+  mgmt:
+    driver: bridge
