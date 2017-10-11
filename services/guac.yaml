@@ -7,15 +7,13 @@ services:
     ports:
       - "127.0.0.1:8080:8080/tcp"
     volumes:
-      - guac:/app/data
+      - /Users/mayank/.pref/data/guac:/app/data:rw
     networks:
       mgmt:
     hostname: guac
     mem_limit: 500m
     memswap_limit: 500m
     mem_reservation: 300m
-volumes: 
-  guac:
 
 networks: 
   mgmt:

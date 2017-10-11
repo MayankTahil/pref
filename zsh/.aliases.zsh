@@ -1,6 +1,7 @@
 export ZSH_CONF="~/.pref/zsh"
 alias config="subl $ZSH_CONF"
 alias services="cd ~/.pref/services"
+alias perf="cd ~/perf"
 
 push(){
 	name=$(basename "$1" ".")
@@ -8,7 +9,7 @@ push(){
 	printf "\n"
 }
 get(){
-	curl -k $1 -o $2
+	curl -k $1 -o $2 &
 }
 
 ##
@@ -120,7 +121,7 @@ alias aws-cli="docker run -it \
 		mayankt/aws-cli"
 alias aws_end="docker rm -f aws-cli"
 aws(){
-	if [ -n $( docker ps | grep aws-cli ) ]; then
+	if [[ -n $( docker ps | grep aws-cli ) ]]; then
 	  aws_end && \
 	  aws-cli
 	else

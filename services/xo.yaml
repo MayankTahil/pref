@@ -7,15 +7,10 @@ services:
     ports:
       - "127.0.0.1:8000:8000/tcp"
     volumes:
-      - xo-redis:/var/lib/redis
-      - xo-server:/var/lib/xo-server
+      - /Users/mayank/.pref/data/xo/redis:/var/lib/redis:rw
+      - /Users/mayank/.pref/data/xo/server:/var/lib/xo-server
     networks:
       mgmt:
-
-volumes: 
-  xo-server:
-  xo-redis:
-
 networks: 
   mgmt:
     driver: bridge
