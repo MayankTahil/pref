@@ -2,13 +2,18 @@
 version: "2"
 services:
   # Docker registry service for DIND Backdoor environment
-  registry:
-    image: registry
+  registry.store:
+    image: registry:2
     ports:
-      - "127.0.0.1:80:80/tcp"
+      - 80:80
+    environment:
+      - REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/data
+      - REGISTRY_HTTP_ADDR=0.0.0.0:80
+    volumes:
+      - /Users/mayank/.pref/data/registry:/data:rw
+    hostname: registry.store
     networks:
       mgmt:
-    hostname: registry
 networks: 
   mgmt:
     driver: bridge

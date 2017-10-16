@@ -21,6 +21,6 @@ RUN curl -O https://storage.googleapis.com/kubernetes-release/release/v1.7.1/bin
  chmod +x kubectl && mkdir /kube && \
  echo 'export KUBECONFIG=/kube/config' >> /etc/profile && \
  mkdir /etc/docker && \
- echo "{ \"insecure-registries\":[\"registry\"] }" > /etc/docker/daemon.json
+ echo "{ \"insecure-registries\":[\"registry.store:5000\"] }" > /etc/docker/daemon.json
 WORKDIR /data
 CMD dockerd >/dev/null 2>/dev/null & bash

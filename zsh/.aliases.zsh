@@ -84,7 +84,7 @@ sandbox(){
   	docker-compose -f sandbox.yaml down &> /dev/null
 	elif [ "$1" = "update" ]; then
   	services && \
-  	docker-compose -f sandbox.yaml build &> /dev/null && \
+  	docker-compose -f sandbox.yaml build && \
   	docker-compose -f sandbox.yaml run --rm sandbox
 	fi
 }
@@ -99,8 +99,8 @@ registry(){
   	docker-compose -f registry.yaml up -d	
 	elif [ "$1" = "stop" ]; then
   	services && \
-  	docker-compose -f registry.yaml stop registry && \
-  	docker-compose -f registry.yaml rm -f registry
+  	docker-compose -f registry.yaml stop registry.store && \
+  	docker-compose -f registry.yaml rm -f registry.store
 	else
 		echo "Invalid flag"
 	fi
@@ -133,7 +133,7 @@ aws(){
 sandbox-cli(){
   if [ -z "$1" ]; then
   	docker run \
-		--name=sandbox \
+		--name=sandbox-cli \
 		--privileged \
 		-it \
 		--rm \
@@ -141,9 +141,32 @@ sandbox-cli(){
 		-p 127.0.0.1:9000-9010:9000-9010/tcp \
 		mayankt/backdoor:sandbox
   elif [ "$1" = "end" ]; then
-  	docker rm -f sandbox
+  	docker rm -f $(docker ps -aqf "name=sandbox-cli")
   fi
 }
 
-# # Resume-cli
+gitwebui(){
+	if [ -z "$1" ]; then
+		echo "Please give a command like start, stop, or update"
+	elif [ "$1" = "update" ]; then
+  	services && \
+  	docker build -f git-webui.dockerfile -t mayankt/gitwebui .
+  	gitwebui start
+	elif [ "$1" = "start" ]; then
+		local project="gitweb_${PWD##*/}"
+  	docker run -d --name=$project -p 127.0.0.1::8000/tcp -v $(pwd):/data mayankt/gitwebui
+  	docker container port $project | grep -o "127.0.0.1:[0-9]*" | 
+  	open http://$(docker container port $project | grep -o "127.0.0.1:[0-9]*")
+	elif [ "$1" = "stop" ]; then
+		local project="gitweb_${PWD##*/}"
+  	docker rm -f $project
+	elif [ "$1" = "open" ]; then
+		local project="gitweb_${PWD##*/}"
+  	open http://$(docker container port $project | grep -o "127.0.0.1:[0-9]*")
+	else
+		echo "Invalid flag"
+	fi
+}
+
+# Resume-cli
 alias resume="docker run -it --rm -v $(pwd):/data mayankt/resume resume"
