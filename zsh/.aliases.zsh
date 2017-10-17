@@ -1,7 +1,8 @@
-export ZSH_CONF="~/.pref/zsh"
+export ZSH_CONF="$HOME/.pref/zsh"
 alias config="subl $ZSH_CONF"
-alias services="cd ~/.pref/services"
-alias perf="cd ~/perf"
+alias services="cd $HOME/.pref/services"
+alias perf="cd $HOME/perf"
+export KUBECONFIG="$HOME/.kube/config"
 
 push(){
 	name=$(basename "$1" ".")
@@ -149,7 +150,7 @@ sandbox-cli(){
 gitwebui(){
 	if [ -z "$1" ]; then
 		echo "Please give a command like start, stop, or update"
-	elif [ "$1" = "update" ]; then
+	elif [ "$1" "update"]; then
   	services && \
   	docker build -f git-webui.dockerfile -t mayankt/gitwebui .
   	gitwebui start
@@ -173,11 +174,9 @@ gitwebui(){
 alias resume="docker run -it --rm -v $(pwd):/data mayankt/resume resume"
 
 # Kompose cli
-kompose(){
-	if [ -z "$1" ]; then
-		docker run -it --rm -v $(pwd):/data mayankt/kompose-cli
-	elif [ "$1" = "update" ]; then
-  	services && \
-  	docker build -f kompose.dockerfile -t mayankt/kompose-cli . 
-  fi
-}
+alias kompose="docker run -it --rm -v $(pwd):/data -v $KUBECONFIG:/root/.kube/config:ro mayankt/kompose-cli kompose"
+alias kompose-update="services && docker build -f kompose.dockerfile -t mayankt/kompose-cli ."
+
+# kubectl cli
+alias kubectl="docker run -it --rm -v $(pwd):/data -v $KUBECONFIG:/root/.kube/config:ro mayankt/kubectl-cli kubectl"
+alias kubectl-update="services && docker build -f kubectl.dockerfile -t mayankt/kubectl-cli ."

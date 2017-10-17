@@ -1,8 +1,8 @@
 # General
-export PATH="~/.pref/bin:$PATH"
-source ~/.pref/zsh/.antigen.zsh
-source ~/.pref/zsh/.aliases.zsh
-export fpath=(~/.zsh/completion $fpath)
+export PATH="$HOME/.pref/bin:$PATH"
+source $HOME/.pref/zsh/.antigen.zsh
+source $HOME/.pref/zsh/.aliases.zsh
+export fpath=($HOME/.zsh/completion $fpath)
 autoload -Uz compinit && compinit -i
 
 # Plugins
