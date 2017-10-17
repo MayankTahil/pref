@@ -145,6 +145,7 @@ sandbox-cli(){
   fi
 }
 
+# UI for your local git repository. Must be in the local repository folder to execute successfully
 gitwebui(){
 	if [ -z "$1" ]; then
 		echo "Please give a command like start, stop, or update"
@@ -170,3 +171,13 @@ gitwebui(){
 
 # Resume-cli
 alias resume="docker run -it --rm -v $(pwd):/data mayankt/resume resume"
+
+# Kompose cli
+kompose(){
+	if [ -z "$1" ]; then
+		docker run -it --rm -v $(pwd):/data mayankt/kompose-cli
+	elif [ "$1" = "update" ]; then
+  	services && \
+  	docker build -f kompose.dockerfile -t mayankt/kompose-cli . 
+  fi
+}
