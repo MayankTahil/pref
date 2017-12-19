@@ -1,0 +1,14 @@
+---
+version: "2"
+services:
+  # Docker-in-Docker environment for Sandbox
+  mysql-client:
+    build:
+      context: ./
+      dockerfile: mysql-client.dockerfile
+    image: mysql-client
+    networks:
+      mgmt:
+networks: 
+  mgmt:
+    driver: bridge

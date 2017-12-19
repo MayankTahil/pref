@@ -1,8 +1,24 @@
 export ZSH_CONF="$HOME/.pref/zsh"
 alias config="subl $ZSH_CONF"
 alias services="cd $HOME/.pref/services"
-alias perf="cd $HOME/perf"
+alias pref="cd $HOME/.perf"
 export KUBECONFIG="$HOME/.kube/config"
+export NOTES="$HOME/Documents/Notes"
+
+alias resource="source $ZSH_CONF/.aliases.zsh"
+
+enter(){
+	docker-compose exec $1 bash
+}
+
+notes(){
+	if [ -z "$1" ]; then
+		subl $NOTES
+	else
+		subl $NOTES
+		subl "$NOTES/$1.md"
+	fi
+}
 
 push(){
 	name=$(basename "$1" ".")
@@ -11,6 +27,11 @@ push(){
 }
 get(){
 	curl -k $1 -o $2 &
+}
+
+snooze(){
+	sleep $(expr $1 \* 60) && \
+	pmset sleepnow
 }
 
 ##
@@ -90,8 +111,7 @@ sandbox(){
 	fi
 }
 
-# Docker Registry
-# Guacamole 
+# Docker Registry 
 registry(){
 	if [ -z "$1" ]; then
 		echo "Please give a command like 'start' or 'stop'"
@@ -140,9 +160,35 @@ sandbox-cli(){
 		--rm \
 		-v $(pwd):/data \
 		-p 127.0.0.1:9000-9010:9000-9010/tcp \
-		mayankt/backdoor:sandbox
+		backdoor:sandbox
   elif [ "$1" = "end" ]; then
   	docker rm -f $(docker ps -aqf "name=sandbox-cli")
+  fi
+}
+
+# MySQL client CLI
+msql-cli(){
+  if [ -z "$1" ]; then
+  	services && \
+  	docker-compose -f mysql-client.yaml run mysql-client sh
+  elif [ "$1" = "end" ]; then
+  	docker rm -f $(docker ps -aqf "name=sandbox-cli")
+  fi
+}
+
+lab-cli(){
+  if [ -z "$1" ]; then
+  	docker run \
+		--name=lab-cli \
+		--privileged \
+		-it \
+		--rm \
+		-v $HOME/.kube/homelab/config:/root/.kube/config:ro \
+		-v $HOME/Documents/Github/:/data \
+		-p 127.0.0.1:9020-9030:9020-9030/tcp \
+		backdoor:sandbox
+  elif [ "$1" = "end" ]; then
+  	docker rm -f $(docker ps -aqf "name=lab-cli")
   fi
 }
 
@@ -170,13 +216,47 @@ gitwebui(){
 	fi
 }
 
+# Hexo static site builder
+
+alias hexo_server="docker run --rm -v "$PWD:/blog" -p 4000:4000 mayankt/hexo-cli hexo server"
+alias hexo_npm="docker run --rm -v "$PWD:/blog" mayankt/hexo-cli npm"
+alias hexo="docker run -it --rm -v "$PWD:/blog" mayankt/hexo-cli hexo"
+
+# Hugo static site builder
+
+# alias hugo='docker run --rm -it -v $PWD:/src -u hugo jguyomard/hugo-builder hugo'
+# alias hugo-server='docker run --rm -it -v $PWD:/src -p 1313:1313 -u hugo jguyomard/hugo-builder hugo server -D'
+
 # Resume-cli
-alias resume="docker run -it --rm -v $(pwd):/data mayankt/resume resume"
+resume_build(){
+	services &&\
+	docker build -f json-resume.dockerfile -t json-resume .
+}
+
+alias resume_build
+alias resume="docker run -it --rm -v $(pwd):/data json-resume resume"
 
 # Kompose cli
-alias kompose="docker run -it --rm -v $(pwd):/data -v $KUBECONFIG:/root/.kube/config:ro mayankt/kompose-cli kompose"
+alias kompose="docker run -it --rm -v $(pwd):/data mayankt/kompose-cli sh"
 alias kompose-update="services && docker build -f kompose.dockerfile -t mayankt/kompose-cli ."
 
 # kubectl cli
-alias kubectl="docker run -it --rm -v $(pwd):/data -v $KUBECONFIG:/root/.kube/config:ro mayankt/kubectl-cli kubectl"
-alias kubectl-update="services && docker build -f kubectl.dockerfile -t mayankt/kubectl-cli ."
+kubectl-cli(){
+  if [ -z "$1" ]; then
+		docker run \
+		-it  \
+		--rm \
+		-v $(pwd):/data \
+		-v $KUBECONFIG:/root/.kube/config:ro \
+		mayankt/kubectl-cli zsh
+  elif [ "$1" = "remove" ]; then
+  	docker rm -f $(docker ps -aqf "name=kubectl-cli")
+  elif [ "$1" = "update" ]; then
+  	services && \
+  	docker build \
+  	-f \
+  	kubectl.dockerfile \
+  	-t \
+  	mayankt/kubectl-cli .
+  fi
+}
