@@ -1,10 +1,13 @@
 export ZSH_CONF="$HOME/.pref/zsh"
 alias config="subl $ZSH_CONF"
 alias services="cd $HOME/.pref/services"
+alias services_edit="subl $HOME/.pref"
 alias pref="cd $HOME/.perf"
 export KUBECONFIG="$HOME/.kube/config"
 export NOTES="$HOME/Documents/Notes"
-
+export DATA="$HOME/.pref/data"
+alias rss-feed="open https://feedly.com/i/my"
+alias hub="cd ~/Documents/GitHub/"
 alias resource="source $ZSH_CONF/.aliases.zsh"
 
 enter(){
@@ -235,6 +238,7 @@ resume_build(){
 
 alias resume_build
 alias resume="docker run -it --rm -v $(pwd):/data json-resume resume"
+alias coinmon="docker run --rm -ti jaymoulin/coinmon coinmon"
 
 # Kompose cli
 alias kompose="docker run -it --rm -v $(pwd):/data mayankt/kompose-cli sh"

@@ -12,6 +12,7 @@ services:
       - "9000-9010:9000-9010/tcp"
     volumes:
       - ~/Documents/Github/:/data
+      - ~/Documents/homelab/config:/root/.kube/config
     networks:
       mgmt:
 networks: 
